@@ -6,6 +6,13 @@ from tqdm import tqdm
 
 
 def cfg_node_tagging(_fast: angr.analyses.cfg.cfg_fast.CFGFast, _tag_dict):
+    """
+    Extends the given dictionary with given angr fast project nodes
+
+    :param _fast: angr fast project
+    :param _tag_dict: dictionary of bytes to CFG node
+    :return: extended dictionary of bytes to CFG node
+    """
     for _node in _fast.model.nodes():
         node_bytes = _node.byte_string
         if node_bytes not in _tag_dict:
@@ -14,16 +21,36 @@ def cfg_node_tagging(_fast: angr.analyses.cfg.cfg_fast.CFGFast, _tag_dict):
 
 
 def get_current_node_tag(addr, _tag_dict):
+    """
+    Returns the tag of CFG node based on memory address
+
+    :param addr: address of call graph node
+    :param _tag_dict: dictionary of bytes to CFG node
+    :return: tag of CFG node
+    """
     cfg_node = fast.model.get_any_node(addr)
     return _tag_dict[cfg_node.byte_string]
 
 
 def count_all_neighbors(_node):
+    """
+    Returns neighbour count of given node
+
+    :param _node: which node's neighbour count requested
+    :return: number of neighbours
+    """
     neighbor_count = len(list(networkx.all_neighbors(fast_call_graph, _node)))
     return neighbor_count
 
 
 def write_neighbors_with_indices(_fast_call_graph, node_idx_dict: dict, node):
+    """
+    Write a node's neighbours into file based on their indices
+
+    :param _fast_call_graph: the node's graph
+    :param node_idx_dict: node to index dictionary
+    :param node: which node's neighbours should be written
+    """
     neighbor_list = networkx.all_neighbors(_fast_call_graph, node)
     for neighbor in neighbor_list:
         idx = node_idx_dict[neighbor]
@@ -33,6 +60,14 @@ def write_neighbors_with_indices(_fast_call_graph, node_idx_dict: dict, node):
 
 
 def node_index_generation(_fast_call_graph, _node_idx_dict, _idx_node_dict):
+    """
+    Generate node indices and store them in 2 dictionary (dictionary both ways)
+
+    :param _fast_call_graph: target graph
+    :param _node_idx_dict: node to index dict
+    :param _idx_node_dict: index to node dict
+    :return: _node_idx_dict, _idx_node_dict
+    """
     _node_idx = 0
     nodes_list = list(_fast_call_graph.nodes())
     for _node in nodes_list:
